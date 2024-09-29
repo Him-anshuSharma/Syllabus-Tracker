@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Study Schedule Timeline</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 10px; /* Reduced padding for mobile */
+        }
+        .countdown {
+            font-size: 2em;
+            font-weight: bold;
+            color: #3498db;
+            text-align: center;
+            margin-bottom: 20px;
+            padding: 15px;
+            background: #e0f7fa;
+            border: 1px solid #00bcd4;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+        }
+        .sidebar {
+            width: 100%; /* Make sidebar full width on mobile */
+            padding: 10px;
+            background-color: #ffffff;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px; /* Space below sidebar */
+        }
+        .sidebar h2 {
+            margin: 0;
+            font-size: 18px;
+            color: #3498db;
+        }
+        .current-month {
+            background-color: #ffeb3b; /* Highlight color */
+            padding: 10px;
+            border-radius: 5px;
+            font-weight: bold;
+            text-align: center; /* Center align text */
+        }
+        .timeline {
+            flex-grow: 1;
+            max-width: 600px; /* Max width for timeline */
+            margin: auto; /* Center the timeline */
+            padding: 10px 0;
+            border-left: 2px solid #3498db;
+        }
+        .timeline-item {
+            margin: 20px 0;
+            padding-left: 20px;
+            position: relative;
+        }
+        .timeline-item h2 {
+            font-size: 20px;
+            color: #3498db;
+        }
+        .timeline-item p {
+            background: #ffffff;
+            padding: 10px;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+        .timeline-item:before {
+            content: '';
+            position: absolute;
+            left: -8px;
+            top: 10px;
+            width: 16px;
+            height: 16px;
+            background-color: #3498db;
+            border-radius: 50%;
+            border: 2px solid white;
+        }
+
+        /* Responsive Styles */
+        @media (max-width: 600px) {
+            .countdown {
+                font-size: 1.5em; /* Smaller font size for mobile */
+            }
+            .sidebar {
+                padding: 5px; /* Less padding */
+            }
+            .timeline-item h2 {
+                font-size: 18px; /* Smaller title font size */
+            }
+            .timeline-item p {
+                font-size: 14px; /* Smaller text size */
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="countdown" id="countdown">
+        {% if next_target %}
+            Time left for the next target: 
+            <span id="days"></span> days, 
+            <span id="hours"></span> hours, 
+            <span id="minutes"></span> minutes, 
+            <span id="seconds"></span> seconds
+        {% else %}
+            No upcoming targets
+        {% endif %}
+    </div>
+    
+    <div class="sidebar">
+        <h2>Current Month</h2>
+        <div>
+            {% if current_date.year == 2024 and current_date.month == 9 %}
+                <div class="current-month">September 2024</div>
+            {% elif current_date.year == 2024 and current_date.month == 10 %}
+                <div class="current-month">October 2024</div>
+            {% elif current_date.year == 2024 and current_date.month == 11 %}
+                <div class="current-month">November 2024</div>
+            {% elif current_date.year == 2024 and current_date.month == 12 %}
+                <div class="current-month">December 2024</div>
+            {% else %}
+                <div>No current month</div>
+            {% endif %}
+        </div>
+    </div>
+    <div class="timeline">
+        <h1>Study Schedule Timeline</h1>
+        {% for item in timeline %}
+            <div class="timeline-item">
+                <h2>{{ item.date }}</h2>
+                {% for task in item.tasks %}
+                    <p>{{ task }}</p>
+                {% endfor %}
+            </div>
+        {% endfor %}
+    </div>
+
+    <script>
+        // Get the next target date and time from Flask
+        var nextTarget = new Date("{{ next_target.strftime('%Y-%m-%d %H:%M:%S') }}").getTime();
+        
+        // Update the countdown every second
+        var countdownFunction = setInterval(function() {
+            var now = new Date().getTime();
+            var timeLeft = nextTarget - now;
+
+            // Time calculations for days, hours, minutes, seconds
+            var days = Math.floor(timeLeft / (1000 * 60 * 60 * 24));
+            var hours = Math.floor((timeLeft % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            var minutes = Math.floor((timeLeft % (1000 * 60 * 60)) / (1000 * 60));
+            var seconds = Math.floor((timeLeft % (1000 * 60)) / 1000); // Calculate seconds
+
+            // Display the result
+            document.getElementById("days").innerHTML = days;
+            document.getElementById("hours").innerHTML = hours;
+            document.getElementById("minutes").innerHTML = minutes;
+            document.getElementById("seconds").innerHTML = seconds; // Display seconds
+
+            // If the countdown is over, display a message
+            if (timeLeft < 0) {
+                clearInterval(countdownFunction);
+                document.getElementById("countdown").innerHTML = "Target reached!";
+            }
+        }, 1000);
+    </script>
+</body>
+</html>
