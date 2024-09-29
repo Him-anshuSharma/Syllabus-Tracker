@@ -6,7 +6,7 @@ app = Flask(__name__)
 # Sample dynamic data for the timeline
 timeline_data = [
     {"date": "September 2024", "tasks": ["Complete Surgery till 30th September"]},
-    {"date": "October 2024", "tasks": ["Surgery Send-ups (1st - 7th)", "Gynecology & Obstetrics (8th - 28th)"]},
+    {"date": "October 2024", "tasks": ["Terminals (1st - 13th)", "Gynaecology & Obstetrics (14th - 31st)"]},
     {"date": "November 2024", "tasks": ["Medicine (1st - 30th)"]},
     {"date": "December 2024", "tasks": ["Medicine (1st - 31st)"]}
 ]
@@ -19,10 +19,10 @@ def get_next_target_details(timeline):
         for task in month['tasks']:
             if 'Complete Surgery' in task:
                 target_date = datetime(2024, 9, 30, 23, 59, 59)  # End of the day for surgery completion
-            elif 'Surgery Send-ups' in task:
-                target_date = datetime(2024, 10, 1, 0, 0, 0)  # Start of Surgery Send-ups
-            elif 'Gynecology' in task:
-                target_date = datetime(2024, 10, 8, 0, 0, 0)  # Start of Gynecology & Obstetrics
+            elif 'Terminals' in task:
+                target_date = datetime(2024, 10, 1, 0, 0, 0)  # Start of Terminals
+            elif 'Gynaecology' in task:
+                target_date = datetime(2024, 10, 14, 0, 0, 0)  # Start of Gynaecology & Obstetrics
             elif 'Medicine' in task and month['date'] == "November 2024":
                 target_date = datetime(2024, 11, 1, 0, 0, 0)  # Start of Medicine in November
             elif 'Medicine' in task and month['date'] == "December 2024":
